@@ -132,7 +132,7 @@ const Wrapper = styled.div`
   }
 `;
 
-export default function Labelled ({ className, children, help, isFull, isHidden, isOuter, isSmall, label = defaultLabel, labelExtra, style, withEllipsis, withLabel = true }: Props): React.ReactElement<Props> | null {
+function Labelled ({ className = '', children, help, isFull, isHidden, isOuter, isSmall, label = defaultLabel, labelExtra, withEllipsis, withLabel = true }: Props): React.ReactElement<Props> | null {
   if (isHidden) {
     return null;
   } else if (!withLabel) {
@@ -142,10 +142,7 @@ export default function Labelled ({ className, children, help, isFull, isHidden,
   }
 
   return (
-    <Wrapper
-      className={classes('ui--Labelled', isSmall && 'label-small', isFull && 'label-full', isOuter && 'label-outer', className)}
-      style={style}
-    >
+    <Wrapper className={classes('ui--Labelled', isSmall && 'label-small', isFull && 'label-full', isOuter && 'label-outer', className)}>
       <label>
         {
           withEllipsis
@@ -160,3 +157,5 @@ export default function Labelled ({ className, children, help, isFull, isHidden,
     </Wrapper>
   );
 }
+
+export default React.memo(Labelled);

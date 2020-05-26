@@ -29,8 +29,8 @@ function transform ({ value }: Props): (method: string) => ConstValueBase {
   };
 }
 
-export default function SelectKey (props: Props): React.ReactElement<Props> | null {
-  const { className, isError, onChange, options, style, value } = props;
+function SelectKey (props: Props): React.ReactElement<Props> | null {
+  const { className = '', isError, onChange, options, value } = props;
 
   if (!options.length) {
     return null;
@@ -42,10 +42,11 @@ export default function SelectKey (props: Props): React.ReactElement<Props> | nu
       isError={isError}
       onChange={onChange}
       options={options}
-      style={style}
       transform={transform(props)}
       value={value.method}
       withLabel={false}
     />
   );
 }
+
+export default React.memo(SelectKey);

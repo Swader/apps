@@ -2,20 +2,18 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Routes } from './types';
+import { Route } from './types';
 
 import Toolbox from '@polkadot/app-toolbox';
 
-export default ([
-  {
+export default function create (t: <T = string> (key: string, text: string, options: { ns: string }) => T): Route {
+  return {
     Component: Toolbox,
     display: {
       needsApi: []
     },
-    i18n: {
-      defaultValue: 'Toolbox'
-    },
     icon: 'configure',
-    name: 'toolbox'
-  }
-] as Routes);
+    name: 'toolbox',
+    text: t<string>('nav.toolbox', 'Toolbox', { ns: 'apps-routing' })
+  };
+}

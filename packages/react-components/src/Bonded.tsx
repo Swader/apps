@@ -19,25 +19,22 @@ export interface Props extends BareProps {
   withLabel?: boolean;
 }
 
-export default function BondedDisplay (props: Props): React.ReactElement<Props> | null {
-  const { bonded, params, className, label, style } = props;
+function BondedDisplay (props: Props): React.ReactElement<Props> | null {
+  const { bonded, className = '', label, params } = props;
 
   if (!params) {
     return null;
   }
 
   return bonded
-    ? (
-      <>
-        {renderProvided({ className, label, value: bonded })}
-      </>
-    )
+    ? <>{renderProvided({ className, label, value: bonded })}</>
     : (
       <Bonded
         className={classes('ui--Bonded', className)}
         label={label}
         params={params}
-        style={style}
       />
     );
 }
+
+export default React.memo(BondedDisplay);

@@ -2,20 +2,18 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Routes } from './types';
+import { Route } from './types';
 
 import Storage from '@polkadot/app-storage';
 
-export default ([
-  {
+export default function create (t: <T = string> (key: string, text: string, options: { ns: string }) => T): Route {
+  return {
     Component: Storage,
     display: {
       needsApi: []
     },
-    i18n: {
-      defaultValue: 'Chain state'
-    },
     icon: 'database',
-    name: 'chainstate'
-  }
-] as Routes);
+    name: 'chainstate',
+    text: t<string>('nav.storage', 'Chain state', { ns: 'apps-routing' })
+  };
+}

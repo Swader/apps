@@ -18,18 +18,18 @@ function TxModal<P extends Props> ({
   sendTx,
   isSending,
   trigger: Trigger,
-  header = t('Submit signed extrinsic'),
+  header = t<string>('Submit signed extrinsic'),
   children,
   preContent,
   isDisabled = false,
   isSubmittable = true,
   modalProps = {},
   inputAddressExtra,
-  inputAddressLabel = t('using my account'),
-  inputAddressHelp = t('Select the account to use for this action.'),
+  inputAddressLabel = t<string>('using my account'),
+  inputAddressHelp = t<string>('Select the account to use for this action.'),
   inputAddressProps = {},
   submitButtonIcon = 'sign-in',
-  submitButtonLabel = t('Submit'),
+  submitButtonLabel = t<string>('Submit'),
   submitButtonProps = {},
   ...props
 }: P): React.ReactElement<P> | null {
@@ -114,10 +114,10 @@ function TxModal<P extends Props> ({
         </Modal.Content>
         <Modal.Actions onCancel={onClose}>
           <Button
+            icon={submitButtonIcon}
             isDisabled={isDisabled || isSending || !accountId || !isSubmittable}
             isPrimary
             label={submitButtonLabel}
-            icon={submitButtonIcon}
             onClick={onSend}
             {...submitButtonProps}
           />

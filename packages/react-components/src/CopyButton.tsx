@@ -4,7 +4,7 @@
 
 import { BareProps } from './types';
 
-import React, { useContext } from 'react';
+import React, { useCallback, useContext } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
 import StatusContext from './Status/Context';
@@ -17,21 +17,24 @@ interface Props extends BareProps {
   className?: string;
   icon?: string;
   isAddress?: boolean;
-  value?: any;
+  value?: string;
 }
 
-function CopyButton ({ children, className, icon = 'copy', isAddress = false, value }: Props): React.ReactElement<Props> {
+function CopyButton ({ children, className = '', icon = 'copy', isAddress = false, value = '' }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { queueAction } = useContext(StatusContext);
 
-  const _onCopy = (): void => {
-    isAddress && queueAction && queueAction({
-      account: value,
-      action: t('clipboard'),
-      status: 'queued',
-      message: t('address copied')
-    });
-  };
+  const _onCopy = useCallback(
+    (): void => {
+      isAddress && queueAction && queueAction({
+        account: value,
+        action: t<string>('clipboard'),
+        message: t<string>('address copied'),
+        status: 'queued'
+      });
+    },
+    [isAddress, queueAction, t, value]
+  );
 
   return (
     <div className={className}>
@@ -45,8 +48,8 @@ function CopyButton ({ children, className, icon = 'copy', isAddress = false, va
             <Button
               className='icon-button'
               icon={icon}
-              size='mini'
               isPrimary
+              size='mini'
             />
           </span>
         </div>
@@ -55,7 +58,7 @@ function CopyButton ({ children, className, icon = 'copy', isAddress = false, va
   );
 }
 
-export default styled(CopyButton)`
+export default React.memo(styled(CopyButton)`
   cursor: copy;
 
   button.ui.mini.icon.primary.button.icon-button {
@@ -65,4 +68,4 @@ export default styled(CopyButton)`
   .copySpan {
     white-space: nowrap;
   }
-`;
+`);

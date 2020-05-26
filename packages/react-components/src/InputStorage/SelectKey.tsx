@@ -22,15 +22,16 @@ interface Props extends BareProps {
 
 function transform (api: ApiPromise, { value }: Props): (method: string) => StorageEntryPromise {
   return function (method: string): StorageEntryPromise {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return api.query[value.creator.section]
-      ? api.query[value.creator.section][method]
+      ? api.query[value.creator.section][method] as any
       : value;
   };
 }
 
-export default function SelectKey (props: Props): React.ReactElement<Props> | null {
+function SelectKey (props: Props): React.ReactElement<Props> | null {
   const { api } = useApi();
-  const { className, isError, onChange, options, style, value } = props;
+  const { className = '', isError, onChange, options, value } = props;
 
   if (!options.length) {
     return null;
@@ -42,10 +43,11 @@ export default function SelectKey (props: Props): React.ReactElement<Props> | nu
       isError={isError}
       onChange={onChange}
       options={options}
-      style={style}
       transform={transform(api, props)}
       value={value.creator.method}
       withLabel={false}
     />
   );
 }
+
+export default React.memo(SelectKey);

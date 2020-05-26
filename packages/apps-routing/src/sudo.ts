@@ -2,12 +2,12 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Routes } from './types';
+import { Route } from './types';
 
 import Sudo from '@polkadot/app-sudo';
 
-export default ([
-  {
+export default function create (t: <T = string> (key: string, text: string, options: { ns: string }) => T): Route {
+  return {
     Component: Sudo,
     display: {
       needsAccounts: true,
@@ -16,10 +16,8 @@ export default ([
       ],
       needsSudo: true
     },
-    i18n: {
-      defaultValue: 'Sudo'
-    },
     icon: 'unlock',
-    name: 'sudo'
-  }
-] as Routes);
+    name: 'sudo',
+    text: t<string>('nav.sudo', 'Sudo', { ns: 'apps-routing' })
+  };
+}

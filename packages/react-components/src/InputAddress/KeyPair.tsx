@@ -16,15 +16,11 @@ interface Props {
   style?: Record<string, string>;
 }
 
-function KeyPair ({ address, className, style }: Props): React.ReactElement<Props> {
+function KeyPair ({ address, className = '' }: Props): React.ReactElement<Props> {
   return (
-    <div
-      className={['ui--KeyPair', className].join(' ')}
-      style={style}
-    >
+    <div className={['ui--KeyPair', className].join(' ')}>
       <IdentityIcon
         className='icon'
-        size={32}
         value={address}
       />
       <div className='name'>
@@ -37,7 +33,7 @@ function KeyPair ({ address, className, style }: Props): React.ReactElement<Prop
   );
 }
 
-export default styled(KeyPair)`
+export default React.memo(styled(KeyPair)`
   display: flex;
   flex-wrap: nowrap;
   justify-content: space-between;
@@ -57,7 +53,7 @@ export default styled(KeyPair)`
 
   > .icon {
     position: absolute;
-    top: -9px;
+    top: -3px;
     left: 0;
   }
 
@@ -72,4 +68,4 @@ export default styled(KeyPair)`
       text-transform: uppercase;
     }
   }
-`;
+`);

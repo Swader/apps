@@ -14,8 +14,8 @@ interface Props extends BareProps {
   children: React.ReactNode;
 }
 
-function Signer ({ children, className, style }: Props): React.ReactElement<Props> {
-  const { txqueue, queueSetTxStatus } = useContext(StatusContext);
+function Signer ({ children, className = '' }: Props): React.ReactElement<Props> {
+  const { queueSetTxStatus, txqueue } = useContext(StatusContext);
 
   return (
     <>
@@ -25,13 +25,12 @@ function Signer ({ children, className, style }: Props): React.ReactElement<Prop
         key='signer-modal'
         queue={txqueue}
         queueSetTxStatus={queueSetTxStatus}
-        style={style}
       />
     </>
   );
 }
 
-export default styled(Signer)`
+export default React.memo(styled(Signer)`
   .ui--signer-Signer-Content {
     .modal-Text {
       margin-bottom: 1em;
@@ -69,6 +68,6 @@ export default styled(Signer)`
 
   .signToggle {
     position: absolute;
-    left: 1rem;
+    left: 1.5rem;
   }
-`;
+`);

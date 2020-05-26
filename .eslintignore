@@ -1,4 +1,4 @@
+.eslintrc.js
 **/build/*
 **/coverage/*
 **/node_modules/*
-i18next-scanner.config.js

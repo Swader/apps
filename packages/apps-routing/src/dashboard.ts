@@ -2,20 +2,18 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Routes } from './types';
+import { Route } from './types';
 
 import Dashboard from '@polkadot/app-dashboard';
 
-export default ([
-  {
+export default function create (t: <T = string> (key: string, text: string, options: { ns: string }) => T): Route {
+  return {
     Component: Dashboard,
     display: {
       isHidden: true
     },
-    i18n: {
-      defaultValue: 'Dashboard'
-    },
     icon: 'th',
-    name: 'dashboard'
-  }
-] as Routes);
+    name: 'dashboard',
+    text: t<string>('nav.dashboard', 'Dashboard', { ns: 'apps-routing' })
+  };
+}

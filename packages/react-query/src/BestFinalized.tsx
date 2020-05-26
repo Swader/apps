@@ -14,15 +14,12 @@ interface Props extends BareProps {
   label?: React.ReactNode;
 }
 
-export default function BestFinalized ({ children, className, label, style }: Props): React.ReactElement<Props> {
+function BestFinalized ({ children, className = '', label }: Props): React.ReactElement<Props> {
   const { api } = useApi();
-  const bestNumberFinalized = useCall<BlockNumber>(api.derive.chain.bestNumberFinalized as any, []);
+  const bestNumberFinalized = useCall<BlockNumber>(api.derive.chain.bestNumberFinalized, []);
 
   return (
-    <div
-      className={className}
-      style={style}
-    >
+    <div className={className}>
       {label || ''}{
         bestNumberFinalized
           ? formatNumber(bestNumberFinalized)
@@ -31,3 +28,5 @@ export default function BestFinalized ({ children, className, label, style }: Pr
     </div>
   );
 }
+
+export default React.memo(BestFinalized);

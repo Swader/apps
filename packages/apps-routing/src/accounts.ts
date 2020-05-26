@@ -2,20 +2,19 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Routes } from './types';
+import { Route } from './types';
 
-import Accounts from '@polkadot/app-accounts';
+import Accounts, { useCounter } from '@polkadot/app-accounts';
 
-export default ([
-  {
+export default function create (t: <T = string> (key: string, text: string, options: { ns: string }) => T): Route {
+  return {
     Component: Accounts,
     display: {
       needsApi: []
     },
-    i18n: {
-      defaultValue: 'Accounts'
-    },
     icon: 'users',
-    name: 'accounts'
-  }
-] as Routes);
+    name: 'accounts',
+    text: t<string>('nav.accounts', 'Accounts', { ns: 'apps-routing' }),
+    useCounter
+  };
+}

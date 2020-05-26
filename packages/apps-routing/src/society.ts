@@ -2,22 +2,21 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Routes } from './types';
+import { Route } from './types';
 
 import Society from '@polkadot/app-society';
 
-export default ([
-  {
+export default function create (t: <T = string> (key: string, text: string, options: { ns: string }) => T): Route {
+  return {
     Component: Society,
     display: {
+      needsAccounts: true,
       needsApi: [
         'query.society.pot'
       ]
     },
-    i18n: {
-      defaultValue: 'Society'
-    },
     icon: 'grab',
-    name: 'society'
-  }
-] as Routes);
+    name: 'society',
+    text: t<string>('nav.society', 'Society', { ns: 'apps-routing' })
+  };
+}

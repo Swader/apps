@@ -18,7 +18,7 @@ interface Props extends BareProps {
 
 const CMD_MORTAL = 2;
 
-function Qr ({ address, className, isScanning, onSignature, payload }: Props): React.ReactElement<Props> {
+function Qr ({ address, className = '', isScanning, onSignature, payload }: Props): React.ReactElement<Props> {
   return (
     <div className={className}>
       {
@@ -34,7 +34,7 @@ function Qr ({ address, className, isScanning, onSignature, payload }: Props): R
   );
 }
 
-export default styled(Qr)`
+export default React.memo(styled(Qr)`
   margin: 0 auto;
   max-width: 30rem;
-`;
+`);

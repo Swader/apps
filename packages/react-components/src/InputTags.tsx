@@ -33,7 +33,7 @@ interface Props extends BareProps {
 }
 
 function loadTags (): string[] {
-  return (store.get('tags') || ['Default']).sort();
+  return ((store.get('tags') as string[]) || ['Default']).sort();
 }
 
 function valueToOption (value: string): Option {
@@ -55,7 +55,7 @@ function onAddTag (value: string): void {
   saveTags(tags);
 }
 
-export default function InputTags ({ allowAdd = true, className, defaultValue, help, isDisabled, isError, label, onBlur, onChange, onClose, placeholder, searchInput, value, withLabel }: Props): React.ReactElement<Props> {
+function InputTags ({ allowAdd = true, className = '', defaultValue, help, isDisabled, isError, label, onBlur, onChange, onClose, placeholder, searchInput, value, withLabel }: Props): React.ReactElement<Props> {
   return (
     <Dropdown
       allowAdd={allowAdd && !isDisabled}
@@ -78,3 +78,5 @@ export default function InputTags ({ allowAdd = true, className, defaultValue, h
     />
   );
 }
+
+export default React.memo(InputTags);

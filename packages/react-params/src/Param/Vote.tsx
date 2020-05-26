@@ -21,23 +21,23 @@ function doChange (onChange?: (value: any) => void): (_: number) => void {
   };
 }
 
-export default function Vote ({ className, defaultValue: { value }, isDisabled, isError, onChange, style, withLabel }: Props): React.ReactElement<Props> {
+function Vote ({ className = '', defaultValue: { value }, isDisabled, isError, onChange, withLabel }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const optAye = useMemo(() => {
     return [
-      { text: t('Nay'), value: 0 },
-      { text: t('Aye'), value: -1 }
+      { text: t<string>('Nay'), value: 0 },
+      { text: t<string>('Aye'), value: -1 }
     ];
   }, [t]);
   const optConv = useMemo(() => {
     return [
-      { text: t('None'), value: 0 },
-      { text: t('Locked1x'), value: 1 },
-      { text: t('Locked2x'), value: 2 },
-      { text: t('Locked3x'), value: 3 },
-      { text: t('Locked4x'), value: 4 },
-      { text: t('Locked5x'), value: 5 },
-      { text: t('Locked6x'), value: 6 }
+      { text: t<string>('None'), value: 0 },
+      { text: t<string>('Locked1x'), value: 1 },
+      { text: t<string>('Locked2x'), value: 2 },
+      { text: t<string>('Locked3x'), value: 3 },
+      { text: t<string>('Locked4x'), value: 4 },
+      { text: t<string>('Locked5x'), value: 5 },
+      { text: t<string>('Locked6x'), value: 6 }
     ];
   }, [t]);
   const defaultValue = value instanceof BN
@@ -50,18 +50,15 @@ export default function Vote ({ className, defaultValue: { value }, isDisabled, 
     : 0;
 
   return (
-    <Bare
-      className={className}
-      style={style}
-    >
+    <Bare className={className}>
       <Dropdown
         className='full'
         defaultValue={defaultValue}
         isDisabled={isDisabled}
         isError={isError}
-        label={t('aye: bool')}
-        options={optAye}
+        label={t<string>('aye: bool')}
         onChange={doChange(onChange)}
+        options={optAye}
         withLabel={withLabel}
       />
       {isDisabled && (
@@ -70,7 +67,7 @@ export default function Vote ({ className, defaultValue: { value }, isDisabled, 
           defaultValue={defaultConv}
           isDisabled={isDisabled}
           isError={isError}
-          label={t('conviction: Conviction')}
+          label={t<string>('conviction: Conviction')}
           options={optConv}
           withLabel={withLabel}
         />
@@ -78,3 +75,5 @@ export default function Vote ({ className, defaultValue: { value }, isDisabled, 
     </Bare>
   );
 }
+
+export default React.memo(Vote);

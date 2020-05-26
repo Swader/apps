@@ -12,15 +12,14 @@ interface Props extends BareProps {
   label?: React.ReactNode;
 }
 
-export default function NodeName ({ children, className, label, style }: Props): React.ReactElement<Props> {
+function NodeName ({ children, className = '', label }: Props): React.ReactElement<Props> {
   const { systemName } = useApi();
 
   return (
-    <div
-      className={className}
-      style={style}
-    >
+    <div className={className}>
       {label || ''}{systemName}{children}
     </div>
   );
 }
+
+export default React.memo(NodeName);

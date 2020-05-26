@@ -8,11 +8,10 @@ import React from 'react';
 
 import { classes } from '../util';
 
-export default function ButtonDivider ({ className, style }: DividerProps): React.ReactElement<DividerProps> {
+function ButtonDivider ({ className = '' }: DividerProps): React.ReactElement<DividerProps> {
   return (
-    <div
-      className={classes('ui button compact mini basic', className)}
-      style={style}
-    />
+    <div className={classes('ui button compact mini basic', className)} />
   );
 }
+
+export default React.memo(ButtonDivider);

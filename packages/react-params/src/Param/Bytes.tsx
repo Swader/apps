@@ -4,33 +4,44 @@
 
 import { Props } from '../types';
 
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Compact } from '@polkadot/types';
 import { Button } from '@polkadot/react-components';
 
 import BaseBytes from './BaseBytes';
 import File from './File';
 
-export default function Bytes ({ className, defaultValue, isDisabled, isError, label, name, onChange, onEnter, onEscape, style, type, withLabel }: Props): React.ReactElement<Props> {
+function Bytes ({ className = '', defaultValue, isDisabled, isError, label, name, onChange, onEnter, onEscape, type, withLabel }: Props): React.ReactElement<Props> {
+  const [isValid, setIsValid] = useState(false);
   const [isFileDrop, setIsFileDrop] = useState(false);
 
-  const _toggleFile = (): void => setIsFileDrop(true);
-  const _onChangeFile = (value: Uint8Array): void => {
-    onChange && onChange({
-      isValid: value.length !== 0,
-      value: Compact.addLengthPrefix(value)
-    });
-  };
+  const _toggleFile = useCallback(
+    (): void => setIsFileDrop(true),
+    []
+  );
+
+  const _onChangeFile = useCallback(
+    (value: Uint8Array): void => {
+      const isValid = value.length !== 0;
+
+      onChange && onChange({
+        isValid,
+        value: Compact.addLengthPrefix(value)
+      });
+
+      setIsValid(isValid);
+    },
+    [onChange]
+  );
 
   return !isDisabled && isFileDrop
     ? (
       <File
         className={className}
         isDisabled={isDisabled}
-        isError={isError}
+        isError={isError || !isValid}
         label={label}
         onChange={_onChangeFile}
-        style={style}
         withLabel={withLabel}
       />
     )
@@ -46,7 +57,6 @@ export default function Bytes ({ className, defaultValue, isDisabled, isError, l
         onChange={onChange}
         onEnter={onEnter}
         onEscape={onEscape}
-        style={style}
         type={type}
         withLabel={withLabel}
         withLength
@@ -60,3 +70,5 @@ export default function Bytes ({ className, defaultValue, isDisabled, isError, l
       </BaseBytes>
     );
 }
+
+export default React.memo(Bytes);

@@ -8,20 +8,18 @@ import React from 'react';
 import SUIButton from 'semantic-ui-react/dist/commonjs/elements/Button/Button';
 import styled from 'styled-components';
 
-import { classes } from '../util';
 import Divider from './Divider';
 
-function ButtonGroup ({ children, className, isBasic = false, isCentered = false, style }: GroupProps): React.ReactElement<GroupProps> {
+function ButtonGroup ({ children, className = '', isBasic, isCentered }: GroupProps): React.ReactElement<GroupProps> {
   return (
-    <div
-      className={classes('ui--Button-Group', isCentered ? 'centered' : '', className)}
-      style={style}
-    >
-      <SUIButton.Group basic={isBasic}>
-        {
-          isBasic
-            ? null
-            : <Divider style={{ padding: '0em' }} />
+    <div className={`ui--Button-Group ${isCentered ? 'centered' : ''} ${className}`}>
+      <SUIButton.Group
+        basic={isBasic}
+        size='small'
+      >
+        {isBasic
+          ? null
+          : <Divider className='ui--Button-Group-Divider' />
         }
         {children}
       </SUIButton.Group>
@@ -29,17 +27,31 @@ function ButtonGroup ({ children, className, isBasic = false, isCentered = false
   );
 }
 
-(ButtonGroup as GroupType).Divider = Divider;
-
-export default styled(ButtonGroup)`
+const Memo = React.memo(styled(ButtonGroup)`
   text-align: right;
 
   :not(:first-child) {
     margin-top: 0.75rem;
   }
 
+  > .ui.buttons {
+    vertical-align: middle;
+  }
+
   &.centered {
     margin-bottom: 0.5rem;
     text-align: center;
   }
-` as unknown as GroupType;
+
+  &+.ui--Table {
+    margin-top: 1.5rem;
+  }
+
+  .ui--Buttn-Group-Divider {
+    padding: 0;
+  }
+`) as unknown as GroupType;
+
+Memo.Divider = Divider;
+
+export default Memo;

@@ -12,16 +12,12 @@ interface Props {
   className?: string;
   help?: React.ReactNode;
   label: React.ReactNode;
-  style?: any;
   withLabel?: boolean;
 }
 
-function LinkedWrapper ({ children, className, help, label, style, withLabel }: Props): React.ReactElement<Props> {
+function LinkedWrapper ({ children, className = '', help, label, withLabel }: Props): React.ReactElement<Props> {
   return (
-    <div
-      className={className}
-      style={style}
-    >
+    <div className={className}>
       <Labelled
         help={help}
         label={label}
@@ -35,7 +31,7 @@ function LinkedWrapper ({ children, className, help, label, style, withLabel }: 
   );
 }
 
-export default styled(LinkedWrapper)`
+export default React.memo(styled(LinkedWrapper)`
   .ui--DropdownLinked-Items {
     .text {
       box-sizing: border-box;
@@ -72,4 +68,4 @@ export default styled(LinkedWrapper)`
     text-align: right;
     text-overflow: ellipsis;
   }
-`;
+`);

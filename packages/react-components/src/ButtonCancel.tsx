@@ -15,7 +15,7 @@ interface Props {
   tabIndex?: number;
 }
 
-export default function ButtonCancel ({ className, isDisabled, label, onClick, tabIndex }: Props): React.ReactElement<Props> {
+function ButtonCancel ({ className = '', isDisabled, label, onClick, tabIndex }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   return (
@@ -24,9 +24,11 @@ export default function ButtonCancel ({ className, isDisabled, label, onClick, t
       icon='cancel'
       isDisabled={isDisabled}
       isNegative
-      label={label || t('Cancel')}
+      label={label || t<string>('Cancel')}
       onClick={onClick}
       tabIndex={tabIndex}
     />
   );
 }
+
+export default React.memo(ButtonCancel);

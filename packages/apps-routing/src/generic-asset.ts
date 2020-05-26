@@ -2,12 +2,12 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Routes } from './types';
+import { Route } from './types';
 
 import GenericAsset from '@polkadot/app-generic-asset';
 
-export default ([
-  {
+export default function create (t: <T = string> (key: string, text: string, options: { ns: string }) => T): Route {
+  return {
     Component: GenericAsset,
     display: {
       isHidden: false,
@@ -16,10 +16,8 @@ export default ([
         'tx.genericAsset.transfer'
       ]
     },
-    i18n: {
-      defaultValue: 'Generic Asset'
-    },
     icon: 'cubes',
-    name: 'generic-asset'
-  }
-] as Routes);
+    name: 'generic-asset',
+    text: t<string>('nav.generic-asset', 'Generic asset', { ns: 'apps-routing' })
+  };
+}

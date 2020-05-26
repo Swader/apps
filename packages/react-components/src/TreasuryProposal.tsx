@@ -23,7 +23,7 @@ interface Props {
   withLink?: boolean;
 }
 
-export default function TreasuryProposal ({ className, asInset, insetProps, onClick, proposal, proposalId }: Props): React.ReactElement<Props> | null {
+function TreasuryProposal ({ asInset, className = '', insetProps, onClick, proposal, proposalId }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
   const [stateProposal, setProposal] = useState<TreasuryProposalType | null>(null);
   const { api } = useApi();
@@ -34,40 +34,41 @@ export default function TreasuryProposal ({ className, asInset, insetProps, onCl
         .proposals<Option<TreasuryProposalType>>(proposalId)
         .then((proposal): TreasuryProposalType | null => proposal.unwrapOr(null))
         .catch((): null => null)
-        .then(setProposal);
+        .then(setProposal)
+        .catch(console.error);
     } else {
       setProposal(proposal || null);
     }
-  }, [proposal, proposalId]);
+  }, [api, proposal, proposalId]);
 
   if (!stateProposal) {
     return null;
   }
 
-  const { bond, beneficiary, proposer, value } = stateProposal;
+  const { beneficiary, bond, proposer, value } = stateProposal;
 
   const inner = (
     <>
-      <Labelled label={t('proposed by')}>
+      <Labelled label={t<string>('proposed by')}>
         <InputAddress
-          isDisabled
           defaultValue={proposer}
+          isDisabled
           value={proposer}
           withLabel={false}
         />
       </Labelled>
-      <Labelled label={t('beneficiary')}>
+      <Labelled label={t<string>('beneficiary')}>
         <InputAddress
-          isDisabled
           defaultValue={beneficiary}
+          isDisabled
           value={beneficiary}
           withLabel={false}
         />
       </Labelled>
-      <Static label={t('value')}>
+      <Static label={t<string>('value')}>
         <FormatBalance value={value} />
       </Static>
-      <Static label={t('bond')}>
+      <Static label={t<string>('bond')}>
         <FormatBalance value={bond} />
       </Static>
     </>
@@ -93,3 +94,5 @@ export default function TreasuryProposal ({ className, asInset, insetProps, onCl
     </div>
   );
 }
+
+export default React.memo(TreasuryProposal);

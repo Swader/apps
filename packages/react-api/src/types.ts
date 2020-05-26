@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import { InjectedExtension } from '@polkadot/extension-inject/types';
 import { SubmittableExtrinsicFunction } from '@polkadot/api/promise/types';
 
 import ApiPromise from '@polkadot/api/promise';
@@ -12,7 +13,6 @@ export type SubtractProps<T, K> = OmitProps<T, keyof K>;
 
 export interface BareProps {
   className?: string;
-  style?: Record<string, any>;
 }
 
 export interface ApiState {
@@ -28,8 +28,10 @@ export interface ApiState {
 
 export interface ApiProps extends ApiState {
   api: ApiPromise;
-  isWaitingInjected: boolean;
+  extensions?: InjectedExtension[];
   isApiConnected: boolean;
+  isApiInitialized: boolean;
+  isWaitingInjected: boolean;
 }
 
 export interface OnChangeCbObs {
@@ -44,7 +46,7 @@ export interface ChangeProps {
 }
 
 export interface CallState {
-  callResult?: any;
+  callResult?: unknown;
   callUpdated?: boolean;
   callUpdatedAt?: number;
 }

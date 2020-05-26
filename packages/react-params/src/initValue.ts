@@ -8,13 +8,16 @@ import { RawParamValue } from './types';
 import BN from 'bn.js';
 import { registry } from '@polkadot/react-api';
 import { Bytes, Raw, createType, getTypeDef } from '@polkadot/types';
+import { isBn } from '@polkadot/util';
 
-export default function getInitValue (def: TypeDef): RawParamValue | RawParamValue[] {
+const warnList: string[] = [];
+
+export default function getInitValue (def: TypeDef): unknown | unknown[] {
   if (def.info === TypeDefInfo.Vec) {
     return [getInitValue(def.sub as TypeDef)];
   } else if (def.info === TypeDefInfo.Tuple) {
     return Array.isArray(def.sub)
-      ? def.sub.map((def): any => getInitValue(def))
+      ? def.sub.map((def) => getInitValue(def))
       : [];
   } else if (def.info === TypeDefInfo.Struct) {
     return Array.isArray(def.sub)
@@ -116,19 +119,23 @@ export default function getInitValue (def: TypeDef): RawParamValue | RawParamVal
 
     default: {
       try {
-        const instance = createType(registry, type as any);
+        const instance = createType(registry, type as 'u32');
         const raw = getTypeDef(instance.toRawType());
 
-        if (instance instanceof BN) {
+        if (isBn(instance)) {
           return new BN(0);
         } else if ([TypeDefInfo.Enum, TypeDefInfo.Struct].includes(raw.info)) {
           return getInitValue(raw);
         }
       } catch (error) {
-        // console.error(error.message);
+        // console.error((error as Error).message);
       }
 
-      console.warn(`Unable to determine default type for ${JSON.stringify(def)}`);
+      // we only want to want once, not spam
+      if (!warnList.includes(type)) {
+        warnList.push(type);
+        console.info(`params: No default value for type ${type} from ${JSON.stringify(def)}, using defaults`);
+      }
 
       return '0x';
     }

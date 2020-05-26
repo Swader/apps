@@ -36,19 +36,19 @@ function getDisplayValue (now = 0, value: BN | Date | number = 0): string {
       ? (value as Date).getTime()
       : bnToBn(value as number).toNumber()
   ) || 0;
-  let display = '0.0s';
+  let display = '0.0 s';
 
   if (now && tsValue) {
     const elapsed = Math.max(Math.abs(now - tsValue), 0) / 1000;
 
     if (elapsed < 15) {
-      display = `${elapsed.toFixed(1)}s`;
+      display = `${elapsed.toFixed(1)} s`;
     } else if (elapsed < 60) {
-      display = `${elapsed | 0}s`;
+      display = `${elapsed | 0} s`;
     } else if (elapsed < 3600) {
-      display = `${elapsed / 60 | 0}m`;
+      display = `${elapsed / 60 | 0} min`;
     } else {
-      display = `${elapsed / 3600 | 0}h`;
+      display = `${elapsed / 3600 | 0} hr`;
     }
   }
 
@@ -57,7 +57,7 @@ function getDisplayValue (now = 0, value: BN | Date | number = 0): string {
 
 tick();
 
-export default function Elapsed ({ className, style, value }: Props): React.ReactElement<Props> {
+function Elapsed ({ className = '', value }: Props): React.ReactElement<Props> {
   const [now, setNow] = useState(lastNow);
 
   useEffect((): () => void => {
@@ -71,11 +71,10 @@ export default function Elapsed ({ className, style, value }: Props): React.Reac
   }, []);
 
   return (
-    <div
-      className={['ui--Elapsed', className].join(' ')}
-      style={style}
-    >
+    <div className={['ui--Elapsed', className].join(' ')}>
       {getDisplayValue(now, value)}
     </div>
   );
 }
+
+export default React.memo(Elapsed);

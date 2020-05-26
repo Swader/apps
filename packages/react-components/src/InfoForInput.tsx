@@ -5,7 +5,6 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { classes } from './util';
 import Labelled from './Labelled';
 
 interface Props {
@@ -14,15 +13,15 @@ interface Props {
   type?: 'error' | 'info' | 'warning';
 }
 
-function InfoForInput ({ children, className, type = 'info' }: Props): React.ReactElement<Props> {
+function InfoForInput ({ children, className = '', type = 'info' }: Props): React.ReactElement<Props> {
   return (
     <Labelled>
-      <div className={classes(className, type)}>{children}</div>
+      <div className={`${className} ${type}`}>{children}</div>
     </Labelled>
   );
 }
 
-export default styled(InfoForInput)`
+export default React.memo(styled(InfoForInput)`
   background: white;
   border-radius: 0 0 0.25rem 0.25rem;
   margin: -0.5rem 0 0.25rem;
@@ -41,4 +40,4 @@ export default styled(InfoForInput)`
     margin: 0;
     padding: 0;
   }
-`;
+`);

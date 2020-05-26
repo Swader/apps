@@ -13,32 +13,41 @@ import { useTranslation } from '../translate';
 import Static from './Static';
 import Unknown from './Unknown';
 
+interface ModuleErrorDefault {
+  isModule?: boolean
+}
+
 interface Details {
   details?: string | null;
   type?: string;
 }
 
-export default function ErrorDisplay (props: Props): React.ReactElement<Props> {
+function isModuleError (value?: ModuleErrorDefault): value is DispatchError {
+  return !!value?.isModule;
+}
+
+function ErrorDisplay (props: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [{ details, type }, setDetails] = useState<Details>({});
 
   useEffect((): void => {
-    if (details !== null && props.defaultValue?.value?.isModule) {
-      try {
-        const mod = (props.defaultValue.value as DispatchError).asModule;
-        const error = registry.findMetaError(new Uint8Array([mod.index.toNumber(), mod.error.toNumber()]));
+    const { value } = props.defaultValue || {};
 
-        setDetails({
-          details: error.documentation.join(', '),
-          type: `${error.section}.${error.name}`
+    if (isModuleError(value as ModuleErrorDefault)) {
+      try {
+        const { documentation, name, section } = registry.findMetaError((value as DispatchError).asModule);
+
+        return setDetails({
+          details: documentation.join(', '),
+          type: `${section}.${name}`
         });
       } catch (error) {
         // Errors may not actually be exposed, in this case, just return the default representation
         console.error(error);
-
-        setDetails({ details: null });
       }
     }
+
+    setDetails({ details: null });
   }, [props.defaultValue]);
 
   if (!props.isDisabled || !details) {
@@ -50,17 +59,19 @@ export default function ErrorDisplay (props: Props): React.ReactElement<Props> {
       <Input
         className='full'
         isDisabled
-        label={t('type')}
+        label={t<string>('type')}
         value={type}
       />
       {details && (
         <Input
           className='full'
           isDisabled
-          label={t('details')}
+          label={t<string>('details')}
           value={details}
         />
       )}
     </Static>
   );
 }
+
+export default React.memo(ErrorDisplay);

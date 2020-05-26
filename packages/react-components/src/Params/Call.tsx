@@ -10,7 +10,7 @@ import { useApi } from '@polkadot/react-hooks';
 
 import Extrinsic from './Extrinsic';
 
-export default function Call ({ className, isDisabled, isError, label, onChange, onEnter, onEscape, style, withLabel }: Props): React.ReactElement<Props> {
+function Call ({ className = '', isDisabled, isError, label, onChange, onEnter, onEscape, withLabel }: Props): React.ReactElement<Props> {
   const { api, apiDefaultTx } = useApi();
 
   const defaultValue = ((): SubmittableExtrinsicFunction<'promise'> => {
@@ -32,8 +32,9 @@ export default function Call ({ className, isDisabled, isError, label, onChange,
       onChange={onChange}
       onEnter={onEnter}
       onEscape={onEscape}
-      style={style}
       withLabel={withLabel}
     />
   );
 }
+
+export default React.memo(Call);

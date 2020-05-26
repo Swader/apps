@@ -15,7 +15,7 @@ export interface Props extends BareProps {
   params?: AccountId | AccountIndex | Address | string | Uint8Array | null;
 }
 
-export default function AvailableDisplay ({ params, className, label, style }: Props): React.ReactElement<Props> | null {
+function AvailableDisplay ({ className = '', label, params }: Props): React.ReactElement<Props> | null {
   if (!params) {
     return null;
   }
@@ -25,7 +25,8 @@ export default function AvailableDisplay ({ params, className, label, style }: P
       className={classes('ui--Available', className)}
       label={label}
       params={params}
-      style={style}
     />
   );
 }
+
+export default React.memo(AvailableDisplay);

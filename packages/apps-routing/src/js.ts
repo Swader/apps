@@ -2,20 +2,18 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Routes } from './types';
+import { Route } from './types';
 
 import Js from '@polkadot/app-js';
 
-export default ([
-  {
+export default function create (t: <T = string> (key: string, text: string, options: { ns: string }) => T): Route {
+  return {
     Component: Js,
     display: {
       needsApi: []
     },
-    i18n: {
-      defaultValue: 'Javascript'
-    },
     icon: 'code',
-    name: 'js'
-  }
-] as Routes);
+    name: 'js',
+    text: t<string>('nav.js', 'Javascript', { ns: 'apps-routing' })
+  };
+}

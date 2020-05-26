@@ -12,17 +12,14 @@ interface Props extends BareProps {
   children?: React.ReactNode;
 }
 
-function Bare ({ children, className, style }: Props): React.ReactElement<Props> {
+function Bare ({ children, className = '' }: Props): React.ReactElement<Props> {
   return (
-    <div
-      className={classes('ui--row', className)}
-      style={style}
-    >
+    <div className={classes('ui--row', className)}>
       {children}
     </div>
   );
 }
 
-export default styled(Bare)`
+export default React.memo(styled(Bare)`
   position: relative;
-`;
+`);

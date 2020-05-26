@@ -2,11 +2,11 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { BareProps } from './types';
+import { BareProps, VoidFn } from './types';
 
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import SUIInput from 'semantic-ui-react/dist/commonjs/elements/Input/Input';
-import { isUndefined } from '@polkadot/util';
+import { isFunction, isUndefined } from '@polkadot/util';
 
 import Labelled from './Labelled';
 
@@ -15,9 +15,10 @@ type Input$Type = 'number' | 'password' | 'text';
 interface Props extends BareProps {
   autoFocus?: boolean;
   children?: React.ReactNode;
-  defaultValue?: any;
+  defaultValue?: string | null;
   help?: React.ReactNode;
   icon?: React.ReactNode;
+  inputClassName?: string;
   isAction?: boolean;
   isDisabled?: boolean;
   isDisabledError?: boolean;
@@ -28,11 +29,11 @@ interface Props extends BareProps {
   isReadOnly?: boolean;
   label?: React.ReactNode;
   labelExtra?: React.ReactNode;
-  max?: any;
+  max?: number;
   maxLength?: number;
-  min?: any;
+  min?: number;
   name?: string;
-  onEnter?: () => void;
+  onEnter?: boolean | VoidFn;
   onEscape?: () => void;
   onChange?: (value: string) => void;
   onBlur?: () => void;
@@ -43,7 +44,7 @@ interface Props extends BareProps {
   placeholder?: string;
   tabIndex?: number;
   type?: Input$Type;
-  value?: any;
+  value?: string | null;
   withLabel?: boolean;
   withEllipsis?: boolean;
 }
@@ -63,13 +64,13 @@ const KEYS = {
   C: 'c',
   CMD: 'Meta',
   CTRL: 'Control',
+  DECIMAL: getDecimalSeparator(),
   ENTER: 'Enter',
   ESCAPE: 'Escape',
   TAB: 'Tab',
   V: 'v',
   X: 'x',
-  ZERO: '0',
-  DECIMAL: getDecimalSeparator()
+  ZERO: '0'
 };
 
 const KEYS_PRE: any[] = [KEYS.ALT, KEYS.CMD, KEYS.CTRL];
@@ -89,34 +90,48 @@ const isSelectAll = (key: string, isPreKeyDown: boolean): boolean =>
 
 let counter = 0;
 
-export default function Input ({ autoFocus = false, children, className, defaultValue, help, icon, isEditable = false, isAction = false, isDisabled = false, isDisabledError = false, isError = false, isFull = false, isHidden = false, isReadOnly = false, label, labelExtra, max, maxLength, min, name, onBlur, onChange, onEnter, onEscape, onKeyDown, onKeyUp, onPaste, placeholder, style, tabIndex, type = 'text', value, withEllipsis, withLabel }: Props): React.ReactElement<Props> {
+function Input ({ autoFocus = false, children, className = '', defaultValue, help, icon, inputClassName, isAction = false, isDisabled = false, isDisabledError = false, isEditable = false, isError = false, isFull = false, isHidden = false, isReadOnly = false, label, labelExtra, max, maxLength, min, name, onBlur, onChange, onEnter, onEscape, onKeyDown, onKeyUp, onPaste, placeholder, tabIndex, type = 'text', value, withEllipsis, withLabel }: Props): React.ReactElement<Props> {
   const [stateName] = useState(`in_${counter++}_at_${Date.now()}`);
 
-  const _onBlur = (): void => {
-    onBlur && onBlur();
-  };
-  const _onChange = ({ target }: React.SyntheticEvent<HTMLInputElement>): void => {
-    onChange && onChange((target as HTMLInputElement).value);
-  };
-  const _onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>): void => {
-    onKeyDown && onKeyDown(event);
-  };
-  const _onKeyUp = (event: React.KeyboardEvent<HTMLInputElement>): void => {
-    onKeyUp && onKeyUp(event);
+  const _onBlur = useCallback(
+    () => onBlur && onBlur(),
+    [onBlur]
+  );
 
-    if (onEnter && event.keyCode === 13) {
-      (event.target as any).blur();
-      onEnter();
-    }
+  const _onChange = useCallback(
+    ({ target }: React.SyntheticEvent<HTMLInputElement>): void =>
+      onChange && onChange((target as HTMLInputElement).value),
+    [onChange]
+  );
 
-    if (onEscape && event.keyCode === 27) {
-      (event.target as any).blur();
-      onEscape();
-    }
-  };
-  const _onPaste = (event: React.ClipboardEvent<HTMLInputElement>): void => {
-    onPaste && onPaste(event);
-  };
+  const _onKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement>): void =>
+      onKeyDown && onKeyDown(event),
+    [onKeyDown]
+  );
+
+  const _onKeyUp = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement>): void => {
+      onKeyUp && onKeyUp(event);
+
+      if (onEnter && event.keyCode === 13) {
+        (event.target as HTMLInputElement).blur();
+        isFunction(onEnter) && onEnter();
+      }
+
+      if (onEscape && event.keyCode === 27) {
+        (event.target as HTMLInputElement).blur();
+        onEscape();
+      }
+    },
+    [onEnter, onEscape, onKeyUp]
+  );
+
+  const _onPaste = useCallback(
+    (event: React.ClipboardEvent<HTMLInputElement>): void =>
+      onPaste && onPaste(event),
+    [onPaste]
+  );
 
   return (
     <Labelled
@@ -125,7 +140,6 @@ export default function Input ({ autoFocus = false, children, className, default
       isFull={isFull}
       label={label}
       labelExtra={labelExtra}
-      style={style}
       withEllipsis={withEllipsis}
       withLabel={withLabel}
     >
@@ -133,9 +147,12 @@ export default function Input ({ autoFocus = false, children, className, default
         action={isAction}
         autoFocus={autoFocus}
         className={
-          isEditable
-            ? 'ui--Input edit icon'
-            : 'ui--Input'
+          [
+            isEditable
+              ? 'ui--Input edit icon'
+              : 'ui--Input',
+            inputClassName || ''
+          ].join(' ')
         }
         defaultValue={
           isUndefined(value)
@@ -145,12 +162,12 @@ export default function Input ({ autoFocus = false, children, className, default
         disabled={isDisabled}
         error={(!isDisabled && isError) || isDisabledError}
         hidden={isHidden}
-        id={name}
         iconPosition={
           isUndefined(icon)
             ? undefined
             : 'left'
         }
+        id={name}
         max={max}
         maxLength={maxLength}
         min={min}
@@ -166,15 +183,15 @@ export default function Input ({ autoFocus = false, children, className, default
         value={value}
       >
         <input
+          autoCapitalize='off'
           autoComplete={
             type === 'password'
               ? 'new-password'
               : 'off'
           }
-          autoCapitalize='off'
           autoCorrect='off'
-          spellCheck={false}
           onPaste={_onPaste}
+          spellCheck={false}
         />
         {isEditable && (
           <i className='edit icon' />
@@ -185,6 +202,8 @@ export default function Input ({ autoFocus = false, children, className, default
     </Labelled>
   );
 }
+
+export default React.memo(Input);
 
 export {
   isCopy,
